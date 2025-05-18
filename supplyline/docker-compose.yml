@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./SupplyLine-MRO-Suite/backend
+    container_name: supplyline-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./SupplyLine-MRO-Suite/database:/app/database
+      - ./SupplyLine-MRO-Suite/flask_session:/app/flask_session
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=sqlite:///app/database/tools.db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./SupplyLine-MRO-Suite/frontend
+    container_name: supplyline-frontend
+    ports:
+      - "8080:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+    restart: unless-stopped 
