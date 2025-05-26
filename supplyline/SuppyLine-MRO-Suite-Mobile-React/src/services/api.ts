@@ -62,6 +62,39 @@ class ApiService {
     }
   }
 
+  // Generic HTTP methods
+  async get<T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : '';
+    return this.request(`${endpoint}${queryString}`);
+  }
+
+  async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+    return this.request(endpoint, {
+      method: 'POST',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
+  async put<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+    return this.request(endpoint, {
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
+  async patch<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+    return this.request(endpoint, {
+      method: 'PATCH',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
+  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
+    return this.request(endpoint, {
+      method: 'DELETE',
+    });
+  }
+
   // Authentication endpoints
   async login(username: string, password: string): Promise<ApiResponse<{ user: User; token: string }>> {
     return this.request('/auth/login', {
