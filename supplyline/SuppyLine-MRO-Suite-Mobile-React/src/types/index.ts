@@ -5,9 +5,19 @@ export type RootStackParamList = {
   Dashboard: undefined;
 };
 
-// User types
-export interface User {
+// Base database record interface
+export interface DatabaseRecord {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+  lastSyncAt?: string;
+  syncStatus: 'synced' | 'pending' | 'conflict' | 'error';
+  localChanges: string; // JSON array of field names that changed locally
+  isActive?: number; // SQLite boolean (0 or 1)
+}
+
+// User types
+export interface User extends DatabaseRecord {
   username: string;
   email: string;
   role: string;
@@ -17,8 +27,7 @@ export interface User {
 }
 
 // Tool types
-export interface Tool {
-  id: string;
+export interface Tool extends DatabaseRecord {
   toolNumber: string;
   name: string;
   description?: string;
@@ -35,8 +44,7 @@ export interface Tool {
 }
 
 // Chemical types
-export interface Chemical {
-  id: string;
+export interface Chemical extends DatabaseRecord {
   name: string;
   chemicalNumber: string;
   description?: string;
@@ -66,6 +74,25 @@ export interface SyncData {
   tools: Tool[];
   chemicals: Chemical[];
   lastSyncTime: string;
+}
+
+// Transaction types
+export interface ToolTransaction extends DatabaseRecord {
+  toolId: string;
+  userId: string;
+  transactionType: 'checkout' | 'return' | 'maintenance' | 'calibration';
+  transactionDate: string;
+  dueDate?: string;
+  notes?: string;
+}
+
+export interface ChemicalTransaction extends DatabaseRecord {
+  chemicalId: string;
+  userId: string;
+  transactionType: 'issue' | 'receive' | 'adjustment' | 'disposal';
+  quantity: number;
+  transactionDate: string;
+  notes?: string;
 }
 
 // Notification types
